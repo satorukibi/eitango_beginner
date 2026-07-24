@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <script>
+    (function () {
+      if (new URLSearchParams(location.search).get("hardreset") !== "1") return;
+      var tasks = [];
+      if ("serviceWorker" in navigator) {
+        tasks.push(
+          navigator.serviceWorker.getRegistrations().then(function (regs) {
+            return Promise.all(regs.map(function (r) { return r.unregister(); }));
+          })
+        );
+      }
+      if ("caches" in window) {
+        tasks.push(
+          caches.keys().then(function (keys) {
+            return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+          })
+        );
+      }
+      Promise.all(tasks).finally(function () {
+        var u = new URL(location.href);
+        u.searchParams.delete("hardreset");
+        u.searchParams.set("_t", Date.now());
+        location.replace(u.href);
+      });
+    })();
+  </script>
+  <title>どこでも英単語 ドリル（初級）</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="manifest" href="manifest.webmanifest?v=1" />
+  <link rel="apple-touch-icon" href="header-cat.png?v=1" />
+  <link rel="stylesheet" href="style.css?v=1" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-row">
+      <h1 class="brand">
+        <span class="brand-name">どこでも英単語</span>
+        <span class="title-sub">ドリル</span>
+      </h1>
+      <span class="subtitle">初級 <span id="appVersion"></span></span>
+      <img class="header-mascot" src="header-cat.png?v=1" alt="" />
+    </div>
+    <div class="header-stats">
+      <span id="learnedCount">覚えた: 0</span>
+      <span id="remainCount">残り: 0</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar" aria-hidden="true">
+      <div id="progressFill" class="progress-fill"></div>
+    </div>
+    <div class="category-row">
+      <label for="catSelect">属性</label>
+      <select id="catSelect" aria-label="属性で絞り込み"></select>
+      <span id="catCount" class="cat-count"></span>
+    </div>
+    <div class="header-actions mode-actions">
+      <button class="btn btn-ghost mode-btn" data-mode="no-ja">和訳なし</button>
+      <button class="btn btn-ghost mode-btn" data-mode="normal">和訳あり</button>
+      <button class="btn btn-ghost mode-btn" data-mode="ex">例文和訳あり</button>
+      <button class="btn btn-ghost mode-btn" data-mode="full">全部表示</button>
+    </div>
+    <div class="header-actions header-actions-read">
+      <button id="readWordsSeqBtn" class="btn btn-primary">▶ 単語(順番)</button>
+      <button id="readWordJaSeqBtn" class="btn btn-primary">▶ 単語→和訳(順番)</button>
+      <button id="readWordExBtn" class="btn btn-primary">▶ 単語→例文(順番)</button>
+      <button id="readJaSeqBtn" class="btn btn-primary">▶ 和訳(順番)</button>
+      <button id="readJaWordSeqBtn" class="btn btn-primary">▶ 和訳→単語(順番)</button>
+      <button id="readExJaBtn" class="btn btn-primary">▶ 例文和訳(順番)</button>
+    </div>
+    <div class="header-actions header-actions-read">
+      <button id="readWordsRandomBtn" class="btn btn-primary">▶ 単語(ランダム)</button>
+      <button id="readWordJaRandomBtn" class="btn btn-primary">▶ 単語→和訳(ランダム)</button>
+      <button id="readJaRandomBtn" class="btn btn-primary">▶ 和訳(ランダム)</button>
+      <button id="readJaWordRandomBtn" class="btn btn-primary">▶ 和訳→単語(ランダム)</button>
+      <button id="stopBtn" class="btn btn-ghost" hidden>■ 停止</button>
+    </div>
+  </header>
+
+  <main id="cardList" class="card-list"></main>
+
+  <div id="emptyState" class="empty-state" hidden>
+    <p id="emptyStateMsg">🎉 すべての単語を覚えました！</p>
+    <button id="restartBtn" class="btn btn-primary">もう一度はじめから</button>
+  </div>
+
+  <footer class="app-management" aria-label="管理用メニュー">
+    <p class="management-title">管理用メニュー</p>
+    <div class="header-actions">
+      <button id="previousGroupBtn" class="btn btn-ghost" disabled>前の単語グループに戻す</button>
+      <button id="shuffleBtn" class="btn btn-ghost">別の12語</button>
+      <button id="learnedListBtn" class="btn btn-ghost">覚えた一覧</button>
+      <button id="resetBtn" class="btn btn-ghost">リセット</button>
+      <button id="updateBtn" class="btn btn-ghost">🔄 最新版に更新</button>
+      <button id="voiceInfoBtn" class="btn btn-ghost">🔧 音声情報</button>
+    </div>
+    <div id="learnedPanel" class="learned-panel" hidden></div>
+    <div id="voicePanel" class="voice-panel" hidden></div>
+  </footer>
+
+  <script src="words_extra.js?v=1"></script>
+  <script src="words.js?v=1"></script>
+  <script src="app.js?v=1"></script>
+</body>
+</html>
