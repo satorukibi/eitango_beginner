@@ -1,9 +1,9 @@
 {
-  "name": "どこでも英単語 ドリル 初級",
-  "short_name": "英単語 初級",
+  "name": "どこでも英単語 初級編",
+  "short_name": "どこでも英単語 初級編",
   "description": "中学〜高校初級レベルの英単語を学べるアプリ",
   "id": "/eitango-beginner-v3",
-  "start_url": "./index.html?v=14&source=pwa",
+  "start_url": "./index.html?v=15&source=pwa",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0f172a",
